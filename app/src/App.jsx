@@ -62,9 +62,11 @@ export default function App() {
     return () => {
       if (timerRef.current) {
         clearInterval(timerRef.current)
+        timerRef.current = null
         if (sessionStartRef.current) {
           const elapsed = Math.floor((Date.now() - sessionStartRef.current) / 1000)
           addSeconds(elapsed)
+          sessionStartRef.current = null
         }
       }
     }
@@ -91,8 +93,9 @@ export default function App() {
     const courseData = getCourseData(selectedCourse)
     const shuffled = shuffleArray(courseData)
 
+    const questionsPerSession = config.questionsPerSession[config.ageGroup] || 5
     const limit = modeId === 'quiz'
-      ? config.questionsPerSession
+      ? questionsPerSession
       : modeId === 'flashcard'
       ? config.modes.flashcard.cardsPerSession
       : shuffled.length

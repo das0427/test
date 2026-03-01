@@ -10,8 +10,8 @@ const config = {
   // 年齢設定 ('young' = 3-4歳, 'older' = 5-6歳)
   ageGroup: 'young',
 
-  // 1セッションの問題数
-  questionsPerSession: 5,
+  // 1セッションの問題数（年齢別）
+  questionsPerSession: { young: 3, older: 5 },
 
   // セッション制限時間（秒）
   sessionTimeLimitSeconds: 5 * 60,

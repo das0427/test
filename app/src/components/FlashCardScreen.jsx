@@ -54,7 +54,10 @@ export default function FlashCardScreen({ questions, onComplete, onUnlock, cours
     const msg = pickRandom(reactions.retry)
     setMokoMessage(msg)
     speak(msg)
-    setRetryQueue(prev => [...prev, q])
+    // 同じカードは1回だけリトライキューに追加
+    setRetryQueue(prev =>
+      prev.some(item => item.id === q.id) ? prev : [...prev, q]
+    )
     setTimeout(() => {
       setMokoMessage(null)
       setIsFlipped(false)
