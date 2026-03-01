@@ -1,41 +1,63 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import HomeScreen from './components/HomeScreen'
+import CourseSelectScreen from './components/CourseSelectScreen'
+import ModeSelectScreen from './components/ModeSelectScreen'
 import QuizScreen from './components/QuizScreen'
+import FlashCardScreen from './components/FlashCardScreen'
+import MatchingScreen from './components/MatchingScreen'
 import ZukanScreen from './components/ZukanScreen'
 import EndScreen from './components/EndScreen'
 import ParentPanel from './components/ParentPanel'
 import { useStorage } from './hooks/useStorage'
 import { useSpeech } from './hooks/useSpeech'
-import hiraganaData from './data/hiragana'
+import { getCourseData, COURSES } from './data/index'
 import config from './config'
 
 const SCREEN_HOME = 'home'
+const SCREEN_COURSE_SELECT = 'course_select'
+const SCREEN_MODE_SELECT = 'mode_select'
 const SCREEN_QUIZ = 'quiz'
+const SCREEN_FLASHCARD = 'flashcard'
+const SCREEN_MATCHING = 'matching'
 const SCREEN_ZUKAN = 'zukan'
 const SCREEN_END = 'end'
 const SCREEN_PARENT = 'parent'
 
+// アクティブな学習画面かどうか（タイマー対象）
+const ACTIVE_SCREENS = [SCREEN_QUIZ, SCREEN_FLASHCARD, SCREEN_MATCHING]
+
 export default function App() {
   const [screen, setScreen] = useState(SCREEN_HOME)
+  const [selectedCourse, setSelectedCourse] = useState(null)
+  const [selectedMode, setSelectedMode] = useState(null)
   const { data, unlockPage, logEmotion, incrementSession, addSeconds, exportJSON } = useStorage()
   const { speak } = useSpeech()
   const timerRef = useRef(null)
   const sessionStartRef = useRef(null)
 
-  // クイズの問題をシャッフル
+  // 選択されたコースの問題データをシャッフル
   const questions = useMemo(() => {
-    const shuffled = [...hiraganaData]
+    if (!selectedCourse) return []
+    const courseData = getCourseData(selectedCourse)
+    const shuffled = [...courseData]
     for (let i = shuffled.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
     }
-    return shuffled.slice(0, config.questionsPerSession)
-  }, [screen]) // screen変更でリシャッフル
+    // クイズモードの場合は問題数制限、他は全問
+    if (selectedMode === 'quiz') {
+      return shuffled.slice(0, config.questionsPerSession)
+    }
+    if (selectedMode === 'flashcard') {
+      return shuffled.slice(0, config.modes.flashcard.cardsPerSession)
+    }
+    return shuffled
+  }, [selectedCourse, selectedMode, screen])
 
   // セッション開始時にタイマー開始
   useEffect(() => {
-    if (screen === SCREEN_QUIZ) {
+    if (ACTIVE_SCREENS.includes(screen)) {
       sessionStartRef.current = Date.now()
       timerRef.current = setInterval(() => {
         const elapsed = Math.floor((Date.now() - sessionStartRef.current) / 1000)
@@ -49,7 +71,6 @@ export default function App() {
     return () => {
       if (timerRef.current) {
         clearInterval(timerRef.current)
-        // セッション時間を記録
         if (sessionStartRef.current) {
           const elapsed = Math.floor((Date.now() - sessionStartRef.current) / 1000)
           addSeconds(elapsed)
@@ -64,13 +85,41 @@ export default function App() {
       speak('きょうは たくさん あそんだね！ また あした あそぼう！')
       return
     }
-    setScreen(SCREEN_QUIZ)
+    setScreen(SCREEN_COURSE_SELECT)
   }, [data.todaysSeconds, speak])
 
-  const handleQuizComplete = useCallback(() => {
+  const handleCourseSelect = useCallback((courseId) => {
+    setSelectedCourse(courseId)
+    setScreen(SCREEN_MODE_SELECT)
+  }, [])
+
+  const handleModeSelect = useCallback((modeId) => {
+    setSelectedMode(modeId)
+    switch (modeId) {
+      case 'quiz':
+        setScreen(SCREEN_QUIZ)
+        break
+      case 'flashcard':
+        setScreen(SCREEN_FLASHCARD)
+        break
+      case 'matching':
+        setScreen(SCREEN_MATCHING)
+        break
+      default:
+        setScreen(SCREEN_QUIZ)
+    }
+  }, [])
+
+  const handleSessionComplete = useCallback(() => {
     incrementSession()
     setScreen(SCREEN_END)
   }, [incrementSession])
+
+  const handleGoHome = useCallback(() => {
+    setSelectedCourse(null)
+    setSelectedMode(null)
+    setScreen(SCREEN_HOME)
+  }, [])
 
   // 保護者パネルへの隠し操作（右上を3回タップ）
   const parentTapRef = useRef(0)
@@ -86,6 +135,11 @@ export default function App() {
       parentTapRef.current = 0
     }, 2000)
   }, [])
+
+  // 選択中のコース名
+  const selectedCourseName = selectedCourse
+    ? COURSES.find(c => c.id === selectedCourse)?.name || ''
+    : ''
 
   return (
     <div className="h-full w-full max-w-lg mx-auto relative overflow-hidden">
@@ -108,13 +162,52 @@ export default function App() {
           />
         )}
 
+        {screen === SCREEN_COURSE_SELECT && (
+          <CourseSelectScreen
+            key="course_select"
+            unlockedPages={data.unlockedPages}
+            onSelect={handleCourseSelect}
+            onBack={handleGoHome}
+          />
+        )}
+
+        {screen === SCREEN_MODE_SELECT && (
+          <ModeSelectScreen
+            key="mode_select"
+            courseName={selectedCourseName}
+            onSelect={handleModeSelect}
+            onBack={() => setScreen(SCREEN_COURSE_SELECT)}
+          />
+        )}
+
         {screen === SCREEN_QUIZ && (
           <QuizScreen
             key="quiz"
             questions={questions}
-            onComplete={handleQuizComplete}
+            onComplete={handleSessionComplete}
             onUnlock={unlockPage}
             onLogEmotion={logEmotion}
+            courseId={selectedCourse}
+          />
+        )}
+
+        {screen === SCREEN_FLASHCARD && (
+          <FlashCardScreen
+            key="flashcard"
+            questions={questions}
+            onComplete={handleSessionComplete}
+            onUnlock={unlockPage}
+            courseId={selectedCourse}
+          />
+        )}
+
+        {screen === SCREEN_MATCHING && (
+          <MatchingScreen
+            key="matching"
+            questions={questions}
+            onComplete={handleSessionComplete}
+            onUnlock={unlockPage}
+            courseId={selectedCourse}
           />
         )}
 
@@ -122,14 +215,14 @@ export default function App() {
           <ZukanScreen
             key="zukan"
             unlockedPages={data.unlockedPages}
-            onBack={() => setScreen(SCREEN_HOME)}
+            onBack={handleGoHome}
           />
         )}
 
         {screen === SCREEN_END && (
           <EndScreen
             key="end"
-            onHome={() => setScreen(SCREEN_HOME)}
+            onHome={handleGoHome}
           />
         )}
 
@@ -138,7 +231,7 @@ export default function App() {
             key="parent"
             data={data}
             onExport={exportJSON}
-            onBack={() => setScreen(SCREEN_HOME)}
+            onBack={handleGoHome}
           />
         )}
       </AnimatePresence>

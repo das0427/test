@@ -1,6 +1,9 @@
 import { motion } from 'framer-motion'
+import { COURSES, getCourseData, getTotalPages } from '../data/index'
 
 export default function ParentPanel({ data, onExport, onBack }) {
+  const totalPages = getTotalPages()
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -10,9 +13,9 @@ export default function ParentPanel({ data, onExport, onBack }) {
       <h2 className="text-xl font-bold text-moko-brown mb-4">保護者パネル</h2>
 
       <div className="bg-white rounded-xl p-4 shadow mb-4">
-        <h3 className="font-bold text-moko-brown mb-2">進捗</h3>
+        <h3 className="font-bold text-moko-brown mb-2">全体の進捗</h3>
         <p className="text-sm text-gray-600">
-          図鑑ページ: {data.unlockedPages.length} / 5 解放済み
+          図鑑ページ: {data.unlockedPages.length} / {totalPages} 解放済み
         </p>
         <p className="text-sm text-gray-600">
           今日のセッション: {data.todaysSessions} 回
@@ -20,6 +23,31 @@ export default function ParentPanel({ data, onExport, onBack }) {
         <p className="text-sm text-gray-600">
           今日の利用時間: {Math.floor(data.todaysSeconds / 60)} 分 {data.todaysSeconds % 60} 秒
         </p>
+      </div>
+
+      <div className="bg-white rounded-xl p-4 shadow mb-4">
+        <h3 className="font-bold text-moko-brown mb-2">コース別進捗</h3>
+        <div className="space-y-2">
+          {COURSES.map((course) => {
+            const courseData = getCourseData(course.id)
+            const unlockedCount = courseData.filter(q => data.unlockedPages.includes(q.id)).length
+            const percent = courseData.length > 0 ? Math.round((unlockedCount / courseData.length) * 100) : 0
+            return (
+              <div key={course.id}>
+                <div className="flex justify-between text-sm text-gray-600">
+                  <span>{course.name}</span>
+                  <span>{unlockedCount}/{courseData.length} ({percent}%)</span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div
+                    className="bg-green-400 rounded-full h-2 transition-all"
+                    style={{ width: `${percent}%` }}
+                  />
+                </div>
+              </div>
+            )
+          })}
+        </div>
       </div>
 
       <div className="bg-white rounded-xl p-4 shadow mb-4">

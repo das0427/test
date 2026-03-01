@@ -14,8 +14,10 @@ function loadData() {
 
 function getDefaultData() {
   return {
-    // 解放済み図鑑ページID
+    // 解放済み図鑑ページID（全コース共通のフラットリスト）
     unlockedPages: [],
+    // コースごとの正答数
+    courseScores: {},
     // 今日のセッション数
     todaysSessions: 0,
     // 今日の日付 (YYYY-MM-DD)
@@ -27,16 +29,24 @@ function getDefaultData() {
   }
 }
 
+function migrateData(saved) {
+  if (!saved.courseScores) {
+    saved.courseScores = {}
+  }
+  return saved
+}
+
 export function useStorage() {
   const [data, setData] = useState(() => {
     const saved = loadData()
     if (!saved) return getDefaultData()
     // 日付が変わっていたら今日分をリセット
     const today = new Date().toISOString().slice(0, 10)
-    if (saved.todaysDate !== today) {
-      return { ...saved, todaysSessions: 0, todaysDate: today, todaysSeconds: 0 }
+    const migrated = migrateData(saved)
+    if (migrated.todaysDate !== today) {
+      return { ...migrated, todaysSessions: 0, todaysDate: today, todaysSeconds: 0 }
     }
-    return saved
+    return migrated
   })
 
   const save = useCallback((updater) => {
@@ -47,10 +57,15 @@ export function useStorage() {
     })
   }, [])
 
-  const unlockPage = useCallback((pageId) => {
+  const unlockPage = useCallback((pageId, courseId) => {
     save((prev) => {
       if (prev.unlockedPages.includes(pageId)) return prev
-      return { ...prev, unlockedPages: [...prev.unlockedPages, pageId] }
+      const newUnlocked = [...prev.unlockedPages, pageId]
+      const newScores = { ...prev.courseScores }
+      if (courseId) {
+        newScores[courseId] = (newScores[courseId] || 0) + 1
+      }
+      return { ...prev, unlockedPages: newUnlocked, courseScores: newScores }
     })
   }, [save])
 

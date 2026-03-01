@@ -1,0 +1,236 @@
+// どうぶつクイズデータ（10種）
+
+const doubutsuData = [
+  {
+    id: 'doubutsu-inu',
+    target: 'いぬ',
+    courseType: 'doubutsu',
+    difficulty: 1,
+    correct: { word: 'わんわん', label: 'わんわん', emoji: '🐕' },
+    wrong: [
+      { word: 'にゃーにゃー', label: 'にゃーにゃー', emoji: '🐈' },
+      { word: 'ぴょんぴょん', label: 'ぴょんぴょん', emoji: '🐇' },
+    ],
+    bonus: { sound: 'わんわん！', fact: 'いぬは ひとの ことばが わかるんだよ', habitat: 'おうち' },
+    zukan: {
+      title: 'なかよしの いぬ',
+      scene: 'モコが犬としっぽを振りながら遊んでいる',
+      color: '#D7CCC8',
+    },
+    emotion: {
+      mokoFeeling: 'うれしい',
+      mokoSays: 'いぬが しっぽを ふってくれたよ！だいすきって ことかな？うれしい！',
+      responseHappy: 'いぬは しっぽで きもちを つたえるんだよ！すごいよね！',
+      responseSad: 'いぬが こわい？ ゆっくり なかよくなれるよ',
+    },
+  },
+  {
+    id: 'doubutsu-neko',
+    target: 'ねこ',
+    courseType: 'doubutsu',
+    difficulty: 1,
+    correct: { word: 'にゃーにゃー', label: 'にゃーにゃー', emoji: '🐈' },
+    wrong: [
+      { word: 'わんわん', label: 'わんわん', emoji: '🐕' },
+      { word: 'ちゅーちゅー', label: 'ちゅーちゅー', emoji: '🐭' },
+    ],
+    bonus: { sound: 'にゃー！', fact: 'ねこは いちにち 16じかんも ねるんだよ', habitat: 'おうち' },
+    zukan: {
+      title: 'ごろごろ ねこ',
+      scene: 'モコの膝の上でねこが丸くなって寝ている',
+      color: '#FFCC80',
+    },
+    emotion: {
+      mokoFeeling: 'しあわせ',
+      mokoSays: 'ねこが ごろごろ いってる… あったかいなぁ。しあわせ',
+      responseHappy: 'ねこは きもちいいと ごろごろ いうんだよ！なかよしだね！',
+      responseSad: 'ねこが ひっかいた？ びっくりしちゃったのかも',
+    },
+  },
+  {
+    id: 'doubutsu-usagi',
+    target: 'うさぎ',
+    courseType: 'doubutsu',
+    difficulty: 1,
+    correct: { word: 'ぴょんぴょん', label: 'ぴょんぴょん', emoji: '🐇' },
+    wrong: [
+      { word: 'のそのそ', label: 'のそのそ', emoji: '🐢' },
+      { word: 'ぱたぱた', label: 'ぱたぱた', emoji: '🐦' },
+    ],
+    bonus: { sound: '（しずかな どうぶつだよ）', fact: 'うさぎの みみは とおくの おとも きこえるよ', habitat: 'のはら' },
+    zukan: {
+      title: 'ぴょんぴょん うさぎ',
+      scene: 'モコとうさぎが一緒にジャンプしている',
+      color: '#F8BBD0',
+    },
+    emotion: {
+      mokoFeeling: 'わくわく',
+      mokoSays: 'うさぎさん ぴょーん！たかいなぁ！モコも ぴょーん！わくわく！',
+      responseHappy: 'いっしょに ぴょんぴょん！たのしいね！',
+      responseSad: 'うさぎ はやくて おいつけない？ まっててくれるよ',
+    },
+  },
+  {
+    id: 'doubutsu-zou',
+    target: 'ぞう',
+    courseType: 'doubutsu',
+    difficulty: 1,
+    correct: { word: 'ぱおーん', label: 'ぱおーん', emoji: '🐘' },
+    wrong: [
+      { word: 'がおー', label: 'がおー', emoji: '🦁' },
+      { word: 'もーもー', label: 'もーもー', emoji: '🐄' },
+    ],
+    bonus: { sound: 'ぱおーん！', fact: 'ぞうの はなは てと おんなじで ものを つかめるよ', habitat: 'アフリカ・アジア' },
+    zukan: {
+      title: 'おおきな ぞう',
+      scene: 'モコがぞうの鼻で持ち上げられている',
+      color: '#BDBDBD',
+    },
+    emotion: {
+      mokoFeeling: 'びっくり',
+      mokoSays: 'ぞうさん おおきい！おはなで みずを ぷしゅー！びっくり！',
+      responseHappy: 'すごいよね！ぞうの はなは シャワーにも なるんだよ！',
+      responseSad: 'おおきすぎて こわかった？ でも とっても やさしいんだよ',
+    },
+  },
+  {
+    id: 'doubutsu-kirin',
+    target: 'きりん',
+    courseType: 'doubutsu',
+    difficulty: 1,
+    correct: { word: 'くびながさん', label: 'くびが ながい', emoji: '🦒' },
+    wrong: [
+      { word: 'はなながさん', label: 'はなが ながい', emoji: '🐘' },
+      { word: 'みみながさん', label: 'みみが ながい', emoji: '🐇' },
+    ],
+    bonus: { sound: '（しずかに もぐもぐ たべるよ）', fact: 'きりんの したは むらさきいろ なんだよ', habitat: 'アフリカ' },
+    zukan: {
+      title: 'せのたかい きりん',
+      scene: 'モコがきりんの背中に乗って遠くを見ている',
+      color: '#FFE082',
+    },
+    emotion: {
+      mokoFeeling: 'わくわく',
+      mokoSays: 'きりんの うえから みると せかいが ひろいなぁ！わくわく！',
+      responseHappy: 'たかいところ きもちいいよね！くもに てが とどきそう！',
+      responseSad: 'たかくて こわい？ モコが しっかり つかまってるよ',
+    },
+  },
+  {
+    id: 'doubutsu-panda',
+    target: 'ぱんだ',
+    courseType: 'doubutsu',
+    difficulty: 2,
+    correct: { word: 'しろくろ', label: 'しろと くろ', emoji: '🐼' },
+    wrong: [
+      { word: 'ちゃいろ', label: 'ちゃいろ', emoji: '🐻' },
+      { word: 'はいいろ', label: 'はいいろ', emoji: '🐨' },
+    ],
+    bonus: { sound: '（むしゃむしゃ ささを たべるよ）', fact: 'ぱんだは いちにちに 12じかんも ささを たべるんだよ', habitat: 'ちゅうごく' },
+    zukan: {
+      title: 'もぐもぐ ぱんだ',
+      scene: 'モコがぱんだと一緒にささを食べている',
+      color: '#E0E0E0',
+    },
+    emotion: {
+      mokoFeeling: 'しあわせ',
+      mokoSays: 'ぱんだが むしゃむしゃ おいしそう！しあわせそうだなぁ',
+      responseHappy: 'ぱんだは たべてる ときが いちばん しあわせなんだって！',
+      responseSad: 'ぱんだ あえなくて さみしい？ どうぶつえんに いこう！',
+    },
+  },
+  {
+    id: 'doubutsu-penguin',
+    target: 'ぺんぎん',
+    courseType: 'doubutsu',
+    difficulty: 2,
+    correct: { word: 'よちよち', label: 'よちよち あるく', emoji: '🐧' },
+    wrong: [
+      { word: 'ぴょんぴょん', label: 'ぴょんぴょん はねる', emoji: '🐇' },
+      { word: 'すいすい', label: 'すいすい とぶ', emoji: '🦅' },
+    ],
+    bonus: { sound: '（ぴーぴー となくよ）', fact: 'ぺんぎんは とべないけど およぐのは すごく はやいよ', habitat: 'みなみきょく' },
+    zukan: {
+      title: 'よちよち ぺんぎん',
+      scene: 'モコがぺんぎんと一緒によちよち歩いている',
+      color: '#B3E5FC',
+    },
+    emotion: {
+      mokoFeeling: 'うれしい',
+      mokoSays: 'ぺんぎんが よちよち！かわいいなぁ！うれしい！',
+      responseHappy: 'よちよち かわいいよね！でも うみの なかは はやいんだよ！',
+      responseSad: 'さむいところに すんでるの かわいそう？ ぺんぎんは さむいの へいきだよ！',
+    },
+  },
+  {
+    id: 'doubutsu-iruka',
+    target: 'いるか',
+    courseType: 'doubutsu',
+    difficulty: 2,
+    correct: { word: 'じゃんぷ', label: 'うみで じゃんぷ', emoji: '🐬' },
+    wrong: [
+      { word: 'おさんぽ', label: 'りくで おさんぽ', emoji: '🐕' },
+      { word: 'ひるね', label: 'きの うえで ひるね', emoji: '🐨' },
+    ],
+    bonus: { sound: 'きゅいきゅい！', fact: 'いるかは ねている ときも かたほうの めは あいてるんだよ', habitat: 'うみ' },
+    zukan: {
+      title: 'じゃんぷ！いるか',
+      scene: 'モコがいるかのショーを見て拍手している',
+      color: '#4FC3F7',
+    },
+    emotion: {
+      mokoFeeling: 'わくわく',
+      mokoSays: 'いるかが ざっぱーん！すごい じゃんぷ！わくわく！',
+      responseHappy: 'かっこいいよね！いるかは あたまが とっても いいんだよ！',
+      responseSad: 'うみの どうぶつ こわい？ いるかは にんげんが だいすきだよ',
+    },
+  },
+  {
+    id: 'doubutsu-lion',
+    target: 'らいおん',
+    courseType: 'doubutsu',
+    difficulty: 2,
+    correct: { word: 'がおー', label: 'がおー！', emoji: '🦁' },
+    wrong: [
+      { word: 'わんわん', label: 'わんわん！', emoji: '🐕' },
+      { word: 'ぱおーん', label: 'ぱおーん！', emoji: '🐘' },
+    ],
+    bonus: { sound: 'がおーーー！', fact: 'らいおんの おすには かっこいい たてがみが あるよ', habitat: 'アフリカ' },
+    zukan: {
+      title: 'つよい らいおん',
+      scene: 'モコがらいおんのたてがみを触ろうとしている',
+      color: '#FFB74D',
+    },
+    emotion: {
+      mokoFeeling: 'びっくり',
+      mokoSays: 'らいおん がおー！つよそう！びっくり！',
+      responseHappy: 'かっこいいよね！らいおんは どうぶつの おうさまだよ！',
+      responseSad: 'こわかった？ らいおんも あかちゃんの ときは ちいさいんだよ',
+    },
+  },
+  {
+    id: 'doubutsu-kaba',
+    target: 'かば',
+    courseType: 'doubutsu',
+    difficulty: 2,
+    correct: { word: 'おおきなくち', label: 'おおきな おくち', emoji: '🦛' },
+    wrong: [
+      { word: 'ながいはな', label: 'ながい おはな', emoji: '🐘' },
+      { word: 'ながいくび', label: 'ながい くび', emoji: '🦒' },
+    ],
+    bonus: { sound: '（おおきな くちを あけて あくびするよ）', fact: 'かばは みずの なかで ねることが できるよ', habitat: 'アフリカ' },
+    zukan: {
+      title: 'おくちの おおきい かば',
+      scene: 'モコがかばの大きな口を見て驚いている',
+      color: '#A1887F',
+    },
+    emotion: {
+      mokoFeeling: 'びっくり',
+      mokoSays: 'かばの おくち おおきい！すいかも はいっちゃいそう！びっくり！',
+      responseHappy: 'すごいよね！おおきな おくちで はっぱを たくさん たべるんだよ！',
+      responseSad: 'おくち おおきくて こわかった？ あくびしてる だけだよ',
+    },
+  },
+]
+
+export default doubutsuData

@@ -18,6 +18,25 @@ const config = {
 
   // 1日の利用上限（分）
   dailyLimitMinutes: 30,
+
+  // --- モード別設定 ---
+  modes: {
+    quiz: { enabled: true },
+    flashcard: {
+      enabled: true,
+      cardsPerSession: 10,
+    },
+    matching: {
+      enabled: true,
+      pairs: { young: 3, older: 6 },
+    },
+  },
+
+  // --- コースアンロック設定 ---
+  courseUnlock: {
+    requirePreviousCourse: true,
+    requiredScorePercent: 80,
+  },
 }
 
 export default config

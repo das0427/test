@@ -10,7 +10,36 @@ const PHASE_CORRECT = 'correct'
 const PHASE_EMOTION = 'emotion'
 const PHASE_RESPONSE = 'response'
 
-export default function QuizScreen({ questions, onComplete, onUnlock, onLogEmotion }) {
+// コースタイプに応じた出題文を生成
+function getQuestionText(q) {
+  switch (q.courseType) {
+    case 'suuji':
+      return `「${q.target}」は どれかな？`
+    case 'iro':
+      return `「${q.target}」いろの ものは どれかな？`
+    case 'doubutsu':
+      return `「${q.target}」は どんな どうぶつかな？`
+    case 'hiragana':
+    default:
+      return `「${q.target}」のつく ことばは どれかな？`
+  }
+}
+
+function getQuestionSuffix(q) {
+  switch (q.courseType) {
+    case 'suuji':
+      return 'は？'
+    case 'iro':
+      return 'いろの ものは？'
+    case 'doubutsu':
+      return 'は？'
+    case 'hiragana':
+    default:
+      return 'のつく ことばは？'
+  }
+}
+
+export default function QuizScreen({ questions, onComplete, onUnlock, onLogEmotion, courseId }) {
   const [qIndex, setQIndex] = useState(0)
   const [phase, setPhase] = useState(PHASE_QUESTION)
   const [selectedEmotion, setSelectedEmotion] = useState(null)
@@ -31,7 +60,7 @@ export default function QuizScreen({ questions, onComplete, onUnlock, onLogEmoti
   // フェーズが変わったら読み上げ
   useEffect(() => {
     if (phase === PHASE_QUESTION) {
-      speak(`「${q.target}」のつくことばは どれかな？`)
+      speak(getQuestionText(q))
     } else if (phase === PHASE_CORRECT) {
       speak(`せいかい！ ${q.correct.word}！`)
     } else if (phase === PHASE_EMOTION) {
@@ -42,7 +71,7 @@ export default function QuizScreen({ questions, onComplete, onUnlock, onLogEmoti
   const handleChoice = (choice) => {
     if (choice.word === q.correct.word) {
       setPhase(PHASE_CORRECT)
-      onUnlock(q.id)
+      onUnlock(q.id, courseId)
     } else {
       // 不正解 → 軽く揺れるだけ、否定しない
       speak('もういっかい やってみよう！')
@@ -100,7 +129,7 @@ export default function QuizScreen({ questions, onComplete, onUnlock, onLogEmoti
             <MokoCharacter mood="happy" size={120} speaking />
 
             <p className="text-2xl font-bold text-moko-brown mt-3 mb-6">
-              「<span className="text-4xl text-peach">{q.target}</span>」のつく ことばは？
+              「<span className="text-4xl text-peach">{q.target}</span>」{getQuestionSuffix(q)}
             </p>
 
             <div className="flex flex-col gap-3 w-full max-w-sm">

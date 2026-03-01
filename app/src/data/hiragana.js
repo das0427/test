@@ -5,6 +5,8 @@ const hiraganaData = [
   {
     id: 'a',
     target: 'あ',
+    courseType: 'hiragana',
+    difficulty: 1,
     correct: { word: 'あめ', label: 'あめ', emoji: '🌧️' },
     wrong: [
       { word: 'くも', label: 'くも', emoji: '☁️' },
@@ -25,6 +27,8 @@ const hiraganaData = [
   {
     id: 'i',
     target: 'い',
+    courseType: 'hiragana',
+    difficulty: 1,
     correct: { word: 'いぬ', label: 'いぬ', emoji: '🐕' },
     wrong: [
       { word: 'ねこ', label: 'ねこ', emoji: '🐈' },
@@ -45,6 +49,8 @@ const hiraganaData = [
   {
     id: 'u',
     target: 'う',
+    courseType: 'hiragana',
+    difficulty: 1,
     correct: { word: 'うみ', label: 'うみ', emoji: '🌊' },
     wrong: [
       { word: 'やま', label: 'やま', emoji: '⛰️' },
@@ -65,6 +71,8 @@ const hiraganaData = [
   {
     id: 'e',
     target: 'え',
+    courseType: 'hiragana',
+    difficulty: 1,
     correct: { word: 'えほん', label: 'えほん', emoji: '📖' },
     wrong: [
       { word: 'つみき', label: 'つみき', emoji: '🧱' },
@@ -85,6 +93,8 @@ const hiraganaData = [
   {
     id: 'o',
     target: 'お',
+    courseType: 'hiragana',
+    difficulty: 1,
     correct: { word: 'おほしさま', label: 'おほしさま', emoji: '🌟' },
     wrong: [
       { word: 'おつきさま', label: 'おつきさま', emoji: '🌙' },

@@ -1,8 +1,10 @@
 import { motion } from 'framer-motion'
 import MokoCharacter from './MokoCharacter'
 import config from '../config'
+import { getTotalPages } from '../data/index'
 
 export default function HomeScreen({ onStart, onZukan, unlockedCount }) {
+  const totalPages = getTotalPages()
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -58,7 +60,7 @@ export default function HomeScreen({ onStart, onZukan, unlockedCount }) {
           onClick={onZukan}
           className="bg-leaf text-white text-xl font-bold py-4 rounded-3xl shadow-lg active:shadow-md"
         >
-          ずかん ({unlockedCount}/5)
+          ずかん ({unlockedCount}/{totalPages})
         </motion.button>
       </div>
     </motion.div>
