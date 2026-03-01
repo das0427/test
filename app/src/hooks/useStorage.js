@@ -1,6 +1,8 @@
 import { useState, useCallback } from 'react'
 
 const STORAGE_KEY = 'sodateru-zukan'
+const SCHEMA_VERSION = 2
+const MAX_EMOTION_LOG = 200
 
 function loadData() {
   try {
@@ -14,33 +16,28 @@ function loadData() {
 
 function getDefaultData() {
   return {
-    // 解放済み図鑑ページID（全コース共通のフラットリスト）
+    _version: SCHEMA_VERSION,
     unlockedPages: [],
-    // コースごとの正答数
-    courseScores: {},
-    // 今日のセッション数
     todaysSessions: 0,
-    // 今日の日付 (YYYY-MM-DD)
     todaysDate: new Date().toISOString().slice(0, 10),
-    // 今日の利用秒数
     todaysSeconds: 0,
-    // 感情の選択履歴
     emotionLog: [],
   }
 }
 
 function migrateData(saved) {
-  if (!saved.courseScores) {
-    saved.courseScores = {}
+  const migrated = { ...saved }
+  if (!migrated._version || migrated._version < 2) {
+    delete migrated.courseScores
+    migrated._version = 2
   }
-  return saved
+  return migrated
 }
 
 export function useStorage() {
   const [data, setData] = useState(() => {
     const saved = loadData()
     if (!saved) return getDefaultData()
-    // 日付が変わっていたら今日分をリセット
     const today = new Date().toISOString().slice(0, 10)
     const migrated = migrateData(saved)
     if (migrated.todaysDate !== today) {
@@ -57,26 +54,22 @@ export function useStorage() {
     })
   }, [])
 
-  const unlockPage = useCallback((pageId, courseId) => {
+  const unlockPage = useCallback((pageId) => {
     save((prev) => {
       if (prev.unlockedPages.includes(pageId)) return prev
-      const newUnlocked = [...prev.unlockedPages, pageId]
-      const newScores = { ...prev.courseScores }
-      if (courseId) {
-        newScores[courseId] = (newScores[courseId] || 0) + 1
-      }
-      return { ...prev, unlockedPages: newUnlocked, courseScores: newScores }
+      return { ...prev, unlockedPages: [...prev.unlockedPages, pageId] }
     })
   }, [save])
 
-  const logEmotion = useCallback((questionId, emotion) => {
+  const logEmotion = useCallback((questionId, emotion, courseId) => {
     save((prev) => ({
       ...prev,
       emotionLog: [...prev.emotionLog, {
         questionId,
         emotion,
+        courseId,
         timestamp: new Date().toISOString(),
-      }],
+      }].slice(-MAX_EMOTION_LOG),
     }))
   }, [save])
 
@@ -95,7 +88,7 @@ export function useStorage() {
     a.href = url
     a.download = `sodateru-zukan-${new Date().toISOString().slice(0, 10)}.json`
     a.click()
-    URL.revokeObjectURL(url)
+    setTimeout(() => URL.revokeObjectURL(url), 1000)
   }, [data])
 
   return { data, unlockPage, logEmotion, incrementSession, addSeconds, exportJSON }

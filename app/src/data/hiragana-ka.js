@@ -86,7 +86,7 @@ const hiraganaKaData = [
       mokoFeeling: 'しあわせ',
       mokoSays: 'けーき！おたんじょうびみたい！しあわせだなぁ',
       responseHappy: 'いっしょに おいわい しようね！おめでとう！',
-      responseSad: 'けーき、すきじゃないの？ほかのおやつもあるよ',
+      responseSad: 'そっか… でも モコと いっしょなら たのしいよね',
     },
   },
   {
@@ -96,8 +96,8 @@ const hiraganaKaData = [
     difficulty: 1,
     correct: { word: 'こいぬ', label: 'こいぬ', emoji: '🐶' },
     wrong: [
-      { word: 'こねこ', label: 'こねこ', emoji: '🐱' },
-      { word: 'ことり', label: 'ことり', emoji: '🐤' },
+      { word: 'うさぎ', label: 'うさぎ', emoji: '🐇' },
+      { word: 'ひよこ', label: 'ひよこ', emoji: '🐥' },
     ],
     zukan: {
       title: 'ちいさな こいぬ',

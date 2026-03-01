@@ -8,8 +8,8 @@ const hiraganaHaData = [
     difficulty: 2,
     correct: { word: 'はな', label: 'はな', emoji: '🌸' },
     wrong: [
-      { word: 'はっぱ', label: 'はっぱ', emoji: '🍃' },
       { word: 'きのこ', label: 'きのこ', emoji: '🍄' },
+      { word: 'どんぐり', label: 'どんぐり', emoji: '🌰' },
     ],
     zukan: { title: 'さくらの はな', scene: 'モコが桜の下でお花見をしている', color: '#F8BBD0' },
     emotion: {

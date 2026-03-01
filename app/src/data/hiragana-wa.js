@@ -25,9 +25,10 @@ const hiraganaWaData = [
     courseType: 'hiragana',
     difficulty: 3,
     correct: { word: 'ぱんだ', label: 'ぱんだ', emoji: '🐼' },
+    questionOverride: '「ん」が はいっている ことばは どれかな？',
     wrong: [
-      { word: 'きりん', label: 'きりん', emoji: '🦒' },
-      { word: 'らいおん', label: 'らいおん', emoji: '🦁' },
+      { word: 'うさぎ', label: 'うさぎ', emoji: '🐇' },
+      { word: 'かめ', label: 'かめ', emoji: '🐢' },
     ],
     zukan: { title: '「ん」で おわる どうぶつ', scene: 'モコがぱんだと一緒にささを食べている', color: '#E0E0E0' },
     emotion: {

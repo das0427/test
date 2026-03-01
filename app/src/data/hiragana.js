@@ -97,7 +97,7 @@ const hiraganaData = [
     difficulty: 1,
     correct: { word: 'おほしさま', label: 'おほしさま', emoji: '🌟' },
     wrong: [
-      { word: 'おつきさま', label: 'おつきさま', emoji: '🌙' },
+      { word: 'つき', label: 'つき', emoji: '🌙' },
       { word: 'たいよう', label: 'たいよう', emoji: '☀️' },
     ],
     zukan: {

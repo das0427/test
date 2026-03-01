@@ -1,8 +1,12 @@
+import { useMemo } from 'react'
 import { motion } from 'framer-motion'
 import MokoCharacter from './MokoCharacter'
 import config from '../config'
 
 export default function EndScreen({ onHome }) {
+  const starPositions = useMemo(() =>
+    Array.from({ length: 8 }, () => Math.random() * 300), []
+  )
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -42,7 +46,7 @@ export default function EndScreen({ onHome }) {
         {[...Array(8)].map((_, i) => (
           <motion.span
             key={i}
-            initial={{ y: -20, x: Math.random() * 300, opacity: 0 }}
+            initial={{ y: -20, x: starPositions[i], opacity: 0 }}
             animate={{ y: 500, opacity: [0, 1, 0] }}
             transition={{
               duration: 3,

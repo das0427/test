@@ -42,12 +42,12 @@ const hiraganaRaData = [
     target: 'る',
     courseType: 'hiragana',
     difficulty: 3,
-    correct: { word: 'るーぷ', label: 'るーぷ', emoji: '➿' },
+    correct: { word: 'るすばん', label: 'るすばん', emoji: '🏠' },
     wrong: [
-      { word: 'まる', label: 'まる', emoji: '⭕' },
-      { word: 'しかく', label: 'しかく', emoji: '⬜' },
+      { word: 'おさんぽ', label: 'おさんぽ', emoji: '🚶' },
+      { word: 'おかいもの', label: 'おかいもの', emoji: '🛒' },
     ],
-    zukan: { title: 'ぐるぐる るーぷ', scene: 'モコがぐるぐる模様を描いている', color: '#7E57C2' },
+    zukan: { title: 'はじめての るすばん', scene: 'モコがお家でお留守番をしている', color: '#7E57C2' },
     emotion: {
       mokoFeeling: 'びっくり',
       mokoSays: 'ぐるぐる まわってる！めが まわりそう！びっくり！',
@@ -81,7 +81,7 @@ const hiraganaRaData = [
     correct: { word: 'ろうそく', label: 'ろうそく', emoji: '🕯️' },
     wrong: [
       { word: 'でんき', label: 'でんき', emoji: '💡' },
-      { word: 'かいちゅうでんとう', label: 'かいちゅうでんとう', emoji: '🔦' },
+      { word: 'ひかり', label: 'ひかり', emoji: '🔦' },
     ],
     zukan: { title: 'ゆらゆら ろうそく', scene: 'モコがろうそくの炎を見つめている', color: '#FFB74D' },
     emotion: {

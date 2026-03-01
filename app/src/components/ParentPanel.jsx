@@ -58,7 +58,7 @@ export default function ParentPanel({ data, onExport, onBack }) {
           <div className="max-h-40 overflow-y-auto">
             {data.emotionLog.slice(-10).reverse().map((log, i) => (
               <p key={i} className="text-sm text-gray-600">
-                [{log.questionId}] {log.emotion === 'happy' ? '😊' : '😢'} {log.emotion}
+                [{log.questionId}] {{ happy: '😊', sad: '😢', excited: '🤩', surprised: '😲' }[log.emotion] || '❓'} {log.emotion}
                 <span className="text-gray-400 ml-2">
                   {new Date(log.timestamp).toLocaleString('ja-JP')}
                 </span>

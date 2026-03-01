@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import HomeScreen from './components/HomeScreen'
 import CourseSelectScreen from './components/CourseSelectScreen'
@@ -27,33 +27,24 @@ const SCREEN_PARENT = 'parent'
 // アクティブな学習画面かどうか（タイマー対象）
 const ACTIVE_SCREENS = [SCREEN_QUIZ, SCREEN_FLASHCARD, SCREEN_MATCHING]
 
+function shuffleArray(arr) {
+  const shuffled = [...arr]
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+  }
+  return shuffled
+}
+
 export default function App() {
   const [screen, setScreen] = useState(SCREEN_HOME)
   const [selectedCourse, setSelectedCourse] = useState(null)
   const [selectedMode, setSelectedMode] = useState(null)
+  const [questions, setQuestions] = useState([])
   const { data, unlockPage, logEmotion, incrementSession, addSeconds, exportJSON } = useStorage()
   const { speak } = useSpeech()
   const timerRef = useRef(null)
   const sessionStartRef = useRef(null)
-
-  // 選択されたコースの問題データをシャッフル
-  const questions = useMemo(() => {
-    if (!selectedCourse) return []
-    const courseData = getCourseData(selectedCourse)
-    const shuffled = [...courseData]
-    for (let i = shuffled.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
-    }
-    // クイズモードの場合は問題数制限、他は全問
-    if (selectedMode === 'quiz') {
-      return shuffled.slice(0, config.questionsPerSession)
-    }
-    if (selectedMode === 'flashcard') {
-      return shuffled.slice(0, config.modes.flashcard.cardsPerSession)
-    }
-    return shuffled
-  }, [selectedCourse, selectedMode, screen])
 
   // セッション開始時にタイマー開始
   useEffect(() => {
@@ -95,20 +86,25 @@ export default function App() {
 
   const handleModeSelect = useCallback((modeId) => {
     setSelectedMode(modeId)
-    switch (modeId) {
-      case 'quiz':
-        setScreen(SCREEN_QUIZ)
-        break
-      case 'flashcard':
-        setScreen(SCREEN_FLASHCARD)
-        break
-      case 'matching':
-        setScreen(SCREEN_MATCHING)
-        break
-      default:
-        setScreen(SCREEN_QUIZ)
+
+    // シャッフルは選択確定時に1回だけ実行
+    const courseData = getCourseData(selectedCourse)
+    const shuffled = shuffleArray(courseData)
+
+    const limit = modeId === 'quiz'
+      ? config.questionsPerSession
+      : modeId === 'flashcard'
+      ? config.modes.flashcard.cardsPerSession
+      : shuffled.length
+    setQuestions(shuffled.slice(0, limit))
+
+    const screenMap = {
+      quiz: SCREEN_QUIZ,
+      flashcard: SCREEN_FLASHCARD,
+      matching: SCREEN_MATCHING,
     }
-  }, [])
+    setScreen(screenMap[modeId] ?? SCREEN_QUIZ)
+  }, [selectedCourse])
 
   const handleSessionComplete = useCallback(() => {
     incrementSession()

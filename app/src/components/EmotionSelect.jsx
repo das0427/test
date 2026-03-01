@@ -3,11 +3,13 @@ import { motion } from 'framer-motion'
 const emotions = [
   { id: 'happy', emoji: '😊', label: 'うれしい', color: '#FFD93D' },
   { id: 'sad', emoji: '😢', label: 'かなしい', color: '#A8D8EA' },
+  { id: 'excited', emoji: '🤩', label: 'わくわく', color: '#FF8A65' },
+  { id: 'surprised', emoji: '😲', label: 'びっくり', color: '#CE93D8' },
 ]
 
 export default function EmotionSelect({ onSelect }) {
   return (
-    <div className="flex gap-6">
+    <div className="grid grid-cols-2 gap-4">
       {emotions.map((e) => (
         <motion.button
           key={e.id}

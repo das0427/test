@@ -52,7 +52,7 @@ const hiraganaSaData = [
       mokoFeeling: 'うれしい',
       mokoSays: 'すいか！あまくて つめたくて さいこう！うれしいな！',
       responseHappy: 'おいしいよね！たねを ぺっぺっ するの たのしいよね！',
-      responseSad: 'すいか すきじゃない？ ほかの くだものも あるよ',
+      responseSad: 'そっか… モコが ぎゅってしてあげるね',
     },
   },
   {
@@ -60,10 +60,10 @@ const hiraganaSaData = [
     target: 'せ',
     courseType: 'hiragana',
     difficulty: 1,
-    correct: { word: 'せみ', label: 'せみ', emoji: '🪰' },
+    correct: { word: 'せみ', label: 'せみ', emoji: '🎵' },
     wrong: [
       { word: 'ちょう', label: 'ちょう', emoji: '🦋' },
-      { word: 'とんぼ', label: 'とんぼ', emoji: '🪲' },
+      { word: 'かぶとむし', label: 'かぶとむし', emoji: '🪲' },
     ],
     zukan: { title: 'なつの せみ', scene: 'モコが木の上のせみの声を聞いている', color: '#81C784' },
     emotion: {

@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import MokoCharacter from './MokoCharacter'
 import EmotionSelect from './EmotionSelect'
@@ -6,12 +6,14 @@ import { useSpeech } from '../hooks/useSpeech'
 
 // クイズの状態
 const PHASE_QUESTION = 'question'
+const PHASE_WRONG = 'wrong'
 const PHASE_CORRECT = 'correct'
 const PHASE_EMOTION = 'emotion'
 const PHASE_RESPONSE = 'response'
 
 // コースタイプに応じた出題文を生成
 function getQuestionText(q) {
+  if (q.questionOverride) return q.questionOverride
   switch (q.courseType) {
     case 'suuji':
       return `「${q.target}」は どれかな？`
@@ -26,6 +28,7 @@ function getQuestionText(q) {
 }
 
 function getQuestionSuffix(q) {
+  if (q.questionOverride) return null
   switch (q.courseType) {
     case 'suuji':
       return 'は？'
@@ -39,16 +42,35 @@ function getQuestionSuffix(q) {
   }
 }
 
+function getMokoMood(feeling) {
+  const moodMap = {
+    'うれしい': 'happy',
+    'かなしい': 'sad',
+    'わくわく': 'excited',
+    'びっくり': 'surprised',
+    'しあわせ': 'happy',
+  }
+  return moodMap[feeling] || 'happy'
+}
+
+function getEmotionResponse(emotion, emotionData) {
+  if (emotion === 'sad') return emotionData.responseSad
+  return emotionData.responseHappy
+}
+
 export default function QuizScreen({ questions, onComplete, onUnlock, onLogEmotion, courseId }) {
   const [qIndex, setQIndex] = useState(0)
   const [phase, setPhase] = useState(PHASE_QUESTION)
   const [selectedEmotion, setSelectedEmotion] = useState(null)
+  const [wrongCount, setWrongCount] = useState(0)
   const { speak } = useSpeech()
+  const prevQIndexRef = useRef(-1)
 
-  const q = questions[qIndex]
+  const q = questions && questions.length > 0 ? questions[qIndex] : null
 
   // 選択肢をシャッフル
   const choices = useMemo(() => {
+    if (!q) return []
     const arr = [q.correct, ...q.wrong]
     for (let i = arr.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
@@ -59,23 +81,35 @@ export default function QuizScreen({ questions, onComplete, onUnlock, onLogEmoti
 
   // フェーズが変わったら読み上げ
   useEffect(() => {
-    if (phase === PHASE_QUESTION) {
+    if (!q) return
+    if (phase === PHASE_QUESTION && prevQIndexRef.current !== qIndex) {
+      prevQIndexRef.current = qIndex
       speak(getQuestionText(q))
     } else if (phase === PHASE_CORRECT) {
       speak(`せいかい！ ${q.correct.word}！`)
     } else if (phase === PHASE_EMOTION) {
       speak(q.emotion.mokoSays)
+    } else if (phase === PHASE_WRONG) {
+      const msg = wrongCount >= 2
+        ? `ヒント！ 「${q.correct.word}」を さがしてね！`
+        : 'おしい！ もういっかい やってみよう！'
+      speak(msg)
     }
-  }, [phase, q, speak])
+  }, [phase, q, speak, qIndex, wrongCount])
 
   const handleChoice = (choice) => {
     if (choice.word === q.correct.word) {
+      setWrongCount(0)
       setPhase(PHASE_CORRECT)
       onUnlock(q.id, courseId)
     } else {
-      // 不正解 → 軽く揺れるだけ、否定しない
-      speak('もういっかい やってみよう！')
+      setWrongCount((prev) => prev + 1)
+      setPhase(PHASE_WRONG)
     }
+  }
+
+  const handleRetry = () => {
+    setPhase(PHASE_QUESTION)
   }
 
   const handleCorrectContinue = () => {
@@ -84,10 +118,8 @@ export default function QuizScreen({ questions, onComplete, onUnlock, onLogEmoti
 
   const handleEmotionSelect = (emotion) => {
     setSelectedEmotion(emotion)
-    onLogEmotion(q.id, emotion)
-    const responseText = emotion === 'happy'
-      ? q.emotion.responseHappy
-      : q.emotion.responseSad
+    onLogEmotion(q.id, emotion, courseId)
+    const responseText = getEmotionResponse(emotion, q.emotion)
     speak(responseText)
     setPhase(PHASE_RESPONSE)
   }
@@ -99,7 +131,24 @@ export default function QuizScreen({ questions, onComplete, onUnlock, onLogEmoti
       setQIndex(qIndex + 1)
       setPhase(PHASE_QUESTION)
       setSelectedEmotion(null)
+      setWrongCount(0)
     }
+  }
+
+  // 空の問題リスト対応
+  if (!q) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full px-4 bg-gradient-to-b from-warm to-cream">
+        <MokoCharacter mood="sad" size={120} />
+        <p className="text-xl text-moko-brown mt-4">もんだいが ないよ…</p>
+        <button
+          onClick={onComplete}
+          className="bg-warm text-moko-brown font-bold py-3 px-8 rounded-xl shadow mt-4"
+        >
+          もどる
+        </button>
+      </div>
+    )
   }
 
   return (
@@ -129,7 +178,11 @@ export default function QuizScreen({ questions, onComplete, onUnlock, onLogEmoti
             <MokoCharacter mood="happy" size={120} speaking />
 
             <p className="text-2xl font-bold text-moko-brown mt-3 mb-6">
-              「<span className="text-4xl text-peach">{q.target}</span>」{getQuestionSuffix(q)}
+              {q.questionOverride ? (
+                q.questionOverride
+              ) : (
+                <>「<span className="text-4xl text-peach">{q.target}</span>」{getQuestionSuffix(q)}</>
+              )}
             </p>
 
             <div className="flex flex-col gap-3 w-full max-w-sm">
@@ -145,6 +198,41 @@ export default function QuizScreen({ questions, onComplete, onUnlock, onLogEmoti
                 </motion.button>
               ))}
             </div>
+          </motion.div>
+        )}
+
+        {/* ===== 不正解フェーズ ===== */}
+        {phase === PHASE_WRONG && (
+          <motion.div
+            key="wrong"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="flex flex-col items-center"
+          >
+            <motion.div
+              animate={{ x: [0, -10, 10, -10, 10, 0] }}
+              transition={{ duration: 0.4 }}
+            >
+              <MokoCharacter mood="happy" size={120} speaking />
+            </motion.div>
+
+            <p className="text-xl font-bold text-moko-brown mt-4 mb-2">
+              {wrongCount >= 2
+                ? `ヒント！「${q.correct.word}」を さがしてね！`
+                : 'おしい！'}
+            </p>
+            <p className="text-lg text-moko-brown mb-6">
+              もういっかい やってみよう！
+            </p>
+
+            <motion.button
+              whileTap={{ scale: 0.93 }}
+              onClick={handleRetry}
+              className="bg-peach text-white text-xl font-bold py-4 px-10 rounded-3xl shadow-lg"
+            >
+              もういっかい！
+            </motion.button>
           </motion.div>
         )}
 
@@ -207,16 +295,12 @@ export default function QuizScreen({ questions, onComplete, onUnlock, onLogEmoti
             className="flex flex-col items-center"
           >
             <MokoCharacter
-              mood={q.emotion.mokoFeeling === 'かなしい' ? 'sad'
-                : q.emotion.mokoFeeling === 'びっくり' ? 'surprised'
-                : 'happy'}
+              mood={getMokoMood(q.emotion.mokoFeeling)}
               size={130}
               speaking
             />
 
-            <div
-              className="bg-white/80 rounded-2xl p-4 mx-4 mt-3 mb-6 max-w-sm shadow"
-            >
+            <div className="bg-white/80 rounded-2xl p-4 mx-4 mt-3 mb-6 max-w-sm shadow">
               <p className="text-lg text-moko-brown text-center leading-relaxed">
                 {q.emotion.mokoSays}
               </p>
@@ -243,9 +327,7 @@ export default function QuizScreen({ questions, onComplete, onUnlock, onLogEmoti
 
             <div className="bg-white/80 rounded-2xl p-4 mx-4 mt-3 mb-6 max-w-sm shadow">
               <p className="text-lg text-moko-brown text-center leading-relaxed">
-                {selectedEmotion === 'happy'
-                  ? q.emotion.responseHappy
-                  : q.emotion.responseSad}
+                {getEmotionResponse(selectedEmotion, q.emotion)}
               </p>
             </div>
 

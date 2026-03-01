@@ -50,7 +50,7 @@ const suujiData = [
     target: '3',
     courseType: 'suuji',
     difficulty: 1,
-    correct: { word: 'さん', label: 'おだんご 3こ', emoji: '🍡' },
+    correct: { word: 'さん', label: 'おだんご 3こ', emoji: '🍡🍡🍡' },
     wrong: [
       { word: 'に', label: 'おだんご 2こ', emoji: '🍡🍡' },
       { word: 'ご', label: 'おだんご 5こ', emoji: '🍡🍡🍡🍡🍡' },
@@ -206,8 +206,8 @@ const suujiData = [
     difficulty: 2,
     correct: { word: 'じゅう', label: 'ゆびが ぜんぶで 10ぽん', emoji: '🖐️🖐️' },
     wrong: [
-      { word: 'はち', label: '8ぽん', emoji: '🖐️✌️🤟' },
-      { word: 'きゅう', label: '9ぽん', emoji: '🖐️🤚' },
+      { word: 'はち', label: 'ゆび 8ぽん', emoji: '🖐️☝️☝️☝️' },
+      { word: 'きゅう', label: 'ゆび 9ぽん', emoji: '🖐️✌️✌️' },
     ],
     zukan: {
       title: 'じゅっぽんの ゆび',

@@ -45,7 +45,7 @@ const hiraganaMaData = [
     correct: { word: 'むしめがね', label: 'むしめがね', emoji: '🔍' },
     wrong: [
       { word: 'めがね', label: 'めがね', emoji: '👓' },
-      { word: 'ぼうえんきょう', label: 'ぼうえんきょう', emoji: '🔭' },
+      { word: 'かがみ', label: 'かがみ', emoji: '🪞' },
     ],
     zukan: { title: 'たんけん むしめがね', scene: 'モコが虫めがねで花を観察している', color: '#A5D6A7' },
     emotion: {

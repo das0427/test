@@ -38,7 +38,8 @@ export default function MatchingScreen({ questions, onComplete, onUnlock, course
   const { speak } = useSpeech()
   const [mokoMessage, setMokoMessage] = useState(null)
 
-  const pairCount = config.modes.matching.pairs[config.ageGroup] || 3
+  const configPairCount = config.modes.matching.pairs[config.ageGroup] || 3
+  const pairCount = Math.min(configPairCount, questions.length)
   const gridCols = pairCount <= 3 ? 3 : 4
 
   // カードの生成
