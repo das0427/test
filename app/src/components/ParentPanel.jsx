@@ -1,0 +1,59 @@
+import { motion } from 'framer-motion'
+
+export default function ParentPanel({ data, onExport, onBack }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="flex flex-col h-full px-4 py-6 bg-cream overflow-y-auto"
+    >
+      <h2 className="text-xl font-bold text-moko-brown mb-4">保護者パネル</h2>
+
+      <div className="bg-white rounded-xl p-4 shadow mb-4">
+        <h3 className="font-bold text-moko-brown mb-2">進捗</h3>
+        <p className="text-sm text-gray-600">
+          図鑑ページ: {data.unlockedPages.length} / 5 解放済み
+        </p>
+        <p className="text-sm text-gray-600">
+          今日のセッション: {data.todaysSessions} 回
+        </p>
+        <p className="text-sm text-gray-600">
+          今日の利用時間: {Math.floor(data.todaysSeconds / 60)} 分 {data.todaysSeconds % 60} 秒
+        </p>
+      </div>
+
+      <div className="bg-white rounded-xl p-4 shadow mb-4">
+        <h3 className="font-bold text-moko-brown mb-2">感情の選択履歴</h3>
+        {data.emotionLog.length === 0 ? (
+          <p className="text-sm text-gray-400">まだ記録がありません</p>
+        ) : (
+          <div className="max-h-40 overflow-y-auto">
+            {data.emotionLog.slice(-10).reverse().map((log, i) => (
+              <p key={i} className="text-sm text-gray-600">
+                [{log.questionId}] {log.emotion === 'happy' ? '😊' : '😢'} {log.emotion}
+                <span className="text-gray-400 ml-2">
+                  {new Date(log.timestamp).toLocaleString('ja-JP')}
+                </span>
+              </p>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <div className="flex flex-col gap-3 mt-auto">
+        <button
+          onClick={onExport}
+          className="bg-sky text-white font-bold py-3 rounded-xl shadow"
+        >
+          データをJSONでエクスポート
+        </button>
+        <button
+          onClick={onBack}
+          className="bg-warm text-moko-brown font-bold py-3 rounded-xl shadow"
+        >
+          もどる
+        </button>
+      </div>
+    </motion.div>
+  )
+}
